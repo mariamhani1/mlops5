@@ -24,6 +24,8 @@ with mlflow.start_run() as run:
     run_id = run.info.run_id
     print(f"MLflow Run ID: {run_id}")
     print(f"Accuracy: {accuracy:.4f}")
+
     with open("model_info.txt", "w") as f:
-        f.write(run_id)
-print("Training complete. Run ID saved to model_info.txt")
+        f.write(f"{run_id}\n{accuracy}")
+
+print("Training complete.")

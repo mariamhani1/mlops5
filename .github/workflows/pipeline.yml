@@ -21,19 +21,29 @@ jobs:
 
       - name: Pull data with DVC
         continue-on-error: true
-        run: dvc pull || echo "No DVC remote configured, skipping"
+        run: dvc pull || echo "No DVC remote configured"
 
       - name: Train model
         run: python train.py
         env:
-          MLFLOW_TRACKING_URI: ./mlruns
-          FLIP_Y: "0.5"
+          FLIP_Y: "0.01"
+
+      - name: Show output files
+        run: |
+          cat model_info.txt
+          cat accuracy.txt
 
       - name: Upload model info
         uses: actions/upload-artifact@v4
         with:
           name: model-info
           path: model_info.txt
+
+      - name: Upload accuracy
+        uses: actions/upload-artifact@v4
+        with:
+          name: accuracy-info
+          path: accuracy.txt
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,18 +52,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
       - name: Download model info
         uses: actions/download-artifact@v4
         with:
           name: model-info
 
+      - name: Download accuracy
+        uses: actions/download-artifact@v4
+        with:
+          name: accuracy-info
+
+      - name: Show downloaded files
+        run: |
+          ls -la
+          cat model_info.txt
+          cat accuracy.txt
+
       - name: Check accuracy threshold
         run: python check_threshold.py
 
       - name: Mock Docker Build
-        run: echo "Building Docker image for Run ID $(head -1 model_info.txt)"
+        run: echo "Building Docker image for Run ID:$(cat model_info.txt)"

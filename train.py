@@ -6,9 +6,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 flip_y = float(os.environ.get("FLIP_Y", "0.01"))
-tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "./mlruns")
 
-mlflow.set_tracking_uri(tracking_uri)
+mlflow.set_tracking_uri("./mlruns")
 mlflow.set_experiment("ml_pipeline_experiment")
 
 X, y = make_classification(n_samples=1000, n_features=20, flip_y=flip_y, random_state=42)
@@ -22,10 +21,12 @@ with mlflow.start_run() as run:
     mlflow.log_param("flip_y", flip_y)
     mlflow.log_metric("accuracy", accuracy)
     run_id = run.info.run_id
-    print(f"MLflow Run ID: {run_id}")
-    print(f"Accuracy: {accuracy:.4f}")
 
-    with open("model_info.txt", "w") as f:
-        f.write(f"{run_id}\n{accuracy}")
+print(f"Run ID: {run_id}")
+print(f"Accuracy: {accuracy}")
 
-print("Training complete.")
+with open("model_info.txt", "w") as f:
+    f.write(run_id)
+
+with open("accuracy.txt", "w") as f:
+    f.write(str(accuracy))

@@ -1,18 +1,24 @@
 import sys
+import os
 
 THRESHOLD = 0.85
 
+print("Files in directory:")
+for f in os.listdir("."):
+    print(f"  {f}")
+
+with open("accuracy.txt", "r") as f:
+    accuracy = float(f.read().strip())
+
 with open("model_info.txt", "r") as f:
-    lines = f.read().strip().split("\n")
-    run_id = lines[0]
-    accuracy = float(lines[1])
+    run_id = f.read().strip()
 
 print(f"Run ID:    {run_id}")
-print(f"Accuracy:  {accuracy:.4f}")
+print(f"Accuracy:  {accuracy}")
 print(f"Threshold: {THRESHOLD}")
 
 if accuracy < THRESHOLD:
-    print(f"FAILED: {accuracy:.4f} < {THRESHOLD}")
+    print(f"FAILED: {accuracy} < {THRESHOLD}")
     sys.exit(1)
 else:
-    print(f"PASSED: {accuracy:.4f} >= {THRESHOLD}")
+    print(f"PASSED: {accuracy} >= {THRESHOLD}")

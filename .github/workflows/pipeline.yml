@@ -26,7 +26,7 @@ jobs:
       - name: Train model
         run: python train.py
         env:
-          FLIP_Y: "0.01"
+          FLIP_Y: "0.5"
 
       - name: Show output files
         run: |
